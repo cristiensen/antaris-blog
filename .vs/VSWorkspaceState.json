@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\antaris-blog-client\\src",
+    "\\antaris-blog-client\\src\\app",
+    "\\antaris-blog-client\\src\\app\\services",
+    "\\antaris-blog-client\\src\\environments",
+    "\\AntarisBlog.Api",
+    "\\AntarisBlog.Api\\Controllers",
+    "\\AntarisBlog.Api\\DTOs",
+    "\\AntarisBlog.Api\\DTOs\\Comments",
+    "\\AntarisBlog.Api\\DTOs\\Posts"
+  ],
+  "SelectedNode": "\\AntarisBlog.Api\\Controllers\\PostsController.cs",
+  "PreviewInSolutionExplorer": false
+}
