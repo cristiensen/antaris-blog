@@ -1,0 +1,70 @@
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <button class="text-sm text-slate-400 hover:text-white" (click)="cancel()">← Back</button>
+      <span class="text-sm text-slate-500">New Post</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <form class="space-y-4" (ngSubmit)="save()">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Title</label>
+        <input
+          class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          [(ngModel)]="title"
+          (blur)="generateSlug()"
+          name="title"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Slug</label>
+        <input
+          class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          [(ngModel)]="slug"
+          name="slug"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Content</label>
+        <textarea
+          class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          rows="10"
+          [(ngModel)]="content"
+          name="content"
+          required
+        ></textarea>
+      </div>
+
+      <label class="inline-flex items-center gap-2 text-sm text-slate-300">
+        <input
+          type="checkbox"
+          class="rounded border-slate-700 bg-slate-900"
+          [(ngModel)]="isPublished"
+          name="published"
+        />
+        Published
+      </label>
+
+      <div class="flex gap-3 mt-4">
+        <button
+          type="submit"
+          [disabled]="saving"
+          class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-sm font-medium transition"
+        >
+          {{ saving ? 'Saving...' : 'Save post' }}
+        </button>
+        <button
+          type="button"
+          class="px-4 py-2 rounded-lg border border-slate-700 text-sm"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </main>
+</div>

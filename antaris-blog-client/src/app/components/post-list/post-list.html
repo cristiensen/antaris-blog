@@ -1,0 +1,36 @@
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold">Antaris<span class="text-emerald-400">Blog</span></h1>
+      <button
+        (click)="createPost()"
+        class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg"
+      >
+        + New Post
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <ng-container *ngIf="posts$ | async as posts; else loadingTpl">
+
+      <div *ngIf="posts.length === 0" class="text-slate-500">No posts yet!</div>
+
+      <div class="grid gap-4 mt-4">
+        <article
+          *ngFor="let post of posts"
+          class="bg-slate-900 border border-slate-800 rounded-2xl p-4"
+          (click)="goToPost(post)"
+        >
+          <h2 class="text-xl font-semibold mb-1">{{ post.title }}</h2>
+          <p class="text-sm text-slate-400">{{ post.createdAt | date : 'medium' }}</p>
+          <p class="text-slate-300 text-sm">{{ post.content }}</p>
+        </article>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <p class="text-slate-400">Loading posts...</p>
+    </ng-template>
+  </main>
+</div>

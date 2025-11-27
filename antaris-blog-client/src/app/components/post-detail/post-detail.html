@@ -1,0 +1,112 @@
+<!-- src/app/posts/post-detail/post-detail.component.html -->
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <button class="text-sm text-slate-400 hover:text-white" (click)="back()">← Back</button>
+      <span class="text-sm text-slate-500">AntarisBlog</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Debug block -->
+    <pre class="text-xs text-slate-400 mb-4">
+postId: {{ postId }}
+error: {{ error || 'none' }}
+commentsError: {{ commentsError || 'none' }}
+    </pre>
+
+    <div *ngIf="error" class="text-red-400 mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Post via async pipe -->
+    <ng-container *ngIf="post$ | async as post; else loadingPostTpl">
+      <ng-container *ngIf="post; else notFoundTpl">
+        <article class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
+          <h1 class="text-3xl font-semibold mb-2">
+            {{ post.title }}
+          </h1>
+          <p class="text-sm text-slate-400 mb-4">
+            {{ post.createdAt | date : 'medium' }}
+            <span
+              *ngIf="post.isPublished"
+              class="ml-2 text-emerald-400 text-xs border border-emerald-500/40 rounded-full px-2 py-0.5"
+            >
+              Published
+            </span>
+          </p>
+          <p class="text-slate-200 whitespace-pre-wrap">
+            {{ post.content }}
+          </p>
+        </article>
+
+        <!-- Comments via async pipe -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <ng-container *ngIf="comments$ | async as comments">
+            <h2 class="text-lg font-semibold mb-4">Comments ({{ comments.length }})</h2>
+
+            <div *ngIf="commentsError" class="text-red-400 mb-2">
+              {{ commentsError }}
+            </div>
+
+            <div
+              *ngIf="comments.length === 0 && !commentsError"
+              class="text-sm text-slate-500 mb-4"
+            >
+              No comments yet. Start the discussion!
+            </div>
+
+            <div class="space-y-4 mb-6">
+              <div *ngFor="let c of comments" class="border border-slate-800 rounded-xl p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-medium text-slate-100">{{ c.authorName }}</span>
+                  <span class="text-xs text-slate-500">{{ c.createdAt | date : 'short' }}</span>
+                </div>
+                <p class="text-sm text-slate-200">
+                  {{ c.text }}
+                </p>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Add comment form -->
+          <form class="space-y-3" (ngSubmit)="onSubmitComment()">
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">Name</label>
+              <input
+                class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                [(ngModel)]="newCommentAuthor"
+                name="author"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">Comment</label>
+              <textarea
+                class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                rows="3"
+                [(ngModel)]="newCommentText"
+                name="text"
+                required
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-sm font-medium transition"
+            >
+              Add comment
+            </button>
+          </form>
+        </section>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingPostTpl>
+      <p class="text-slate-400">Loading post...</p>
+    </ng-template>
+
+    <ng-template #notFoundTpl>
+      <p class="text-slate-400">Post not found.</p>
+    </ng-template>
+  </main>
+</div>
