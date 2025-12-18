@@ -4,9 +4,7 @@ services:
     container_name: antaris-sql-test
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: ${DB_PASSWORD_TEST}
-    ports:
-      - "1433:1433"
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD_TEST}
     volumes:
       - antaris_sql_test_data:/var/opt/mssql
     networks:
@@ -15,7 +13,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD_TEST" -Q "SELECT 1" || echo $DB_PASSWORD_TEST',
+          'echo "Using DB password: $MSSQL_SA_PASSWORD" && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1',
         ]
       interval: 10s
       timeout: 5s
