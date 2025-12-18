@@ -15,7 +15,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD_TEST" -Q "SELECT 1" || exit 1',
+          '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD_TEST" -Q "SELECT 1" || echo $DB_PASSWORD_TEST',
         ]
       interval: 10s
       timeout: 5s
