@@ -1,0 +1,44 @@
+name: Test Environment
+
+on:
+  push:
+    branches: ["test"]
+  pull_request:
+    branches: ["test"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_DB_PASSWORD: ${{ secrets.SA_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Docker info
+        run: |
+          docker version
+          docker compose version
+
+      - name: Compose up (Test)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
+
+      - name: Show running containers
+        run: |
+          docker ps
+
+      - name: Apply EF Core migrations (Test)
+        run: |
+          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.TEST_DB_PASSWORD}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
+
+      - name: Health check API
+        run: |
+          curl -sSf http://localhost:4200/api/health > /dev/null
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.test.yml down -v
