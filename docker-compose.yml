@@ -1,0 +1,46 @@
+services:
+  # antaris-sql:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: antaris-sql
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=${DB_PASSWORD_TEST}
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - antaris_sql_data:/var/opt/mssql
+  #   networks:
+  #     - antaris-net
+
+  antaris-api:
+    build:
+      context: ./AntarisBlog.Api
+      dockerfile: Dockerfile
+    container_name: antaris-api
+    # depends_on:
+    #   - antaris-sql
+    #environment:
+    #  - ASPNETCORE_ENVIRONMENT=${CURRENT_ENVIRONMENT}
+    #  - ConnectionStrings__DefaultConnection=Server=antaris-sql-test;Database=AntarisBlogTest;User Id=sa;Password=${DB_PASSWORD_TEST};TrustServerCertificate=True;MultipleActiveResultSets=True;
+    ports:
+      - "5057:5057"
+    networks:
+      - antaris-net
+
+  antaris-web:
+    build:
+      context: ./antaris-blog-client
+      dockerfile: Dockerfile
+    container_name: antaris-web
+    depends_on:
+      - antaris-api
+    ports:
+      - "4200:80"
+    networks:
+      - antaris-net
+
+networks:
+  antaris-net:
+
+volumes:
+  antaris_sql_data:
