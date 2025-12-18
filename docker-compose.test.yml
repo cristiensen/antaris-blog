@@ -24,7 +24,7 @@ services:
   antaris-api:
     depends_on:
       antaris-sql-test:
-        condition: service_healty
+        condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Test
       ConnectionStrings__DefaultConnection: >
