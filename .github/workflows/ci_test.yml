@@ -16,7 +16,11 @@ jobs:
     steps:
       - name: db pass test
         run: | 
-          echo "password is $TEST_DB_PASSWORD"
+          if [ -z "$MY_FIRST_VARIABLE" ]; then
+            echo "MY_FIRST_VARIABLE is EMPTY"
+          else
+            echo "MY_FIRST_VARIABLE is SET"
+          fi
       
       - name: Checkout
         uses: actions/checkout@v4
