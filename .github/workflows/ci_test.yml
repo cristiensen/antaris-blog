@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: db pass test
         run: | 
-          echo "password is $MSSQL_SA_PASSWORD"
+          echo "password is $TEST_DB_PASSWORD"
       
       - name: Checkout
         uses: actions/checkout@v4
