@@ -14,9 +14,9 @@ jobs:
       TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
 
     steps:
-      -name: db pass test
-      run: |
-        echo TEST_DB_PASSWORD
+      - name: db pass test
+        run: | 
+          echo TEST_DB_PASSWORD
       
       - name: Checkout
         uses: actions/checkout@v4
