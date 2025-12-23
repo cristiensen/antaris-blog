@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+      DB_PASSWORD_TEST: ${{ secrets.TEST_DB_PASSWORD }}
 
     steps:
       - name: db pass test
