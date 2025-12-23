@@ -16,10 +16,10 @@ jobs:
     steps:
       - name: db pass test
         run: | 
-          if [ -z "$MY_FIRST_VARIABLE" ]; then
-            echo "MY_FIRST_VARIABLE is EMPTY"
+          if [ -z "$DB_PASSWORD_TEST" ]; then
+            echo "DB_PASSWORD_TEST is EMPTY"
           else
-            echo "MY_FIRST_VARIABLE is SET"
+            echo "DB_PASSWORD_TEST is SET"
           fi
       
       - name: Checkout
@@ -40,7 +40,7 @@ jobs:
 
       - name: Apply EF Core migrations (Test)
         run: |
-          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.TEST_DB_PASSWORD}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
+          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.DB_PASSWORD_TEST}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
 
       - name: Health check API
         run: |
