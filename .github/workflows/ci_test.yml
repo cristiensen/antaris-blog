@@ -34,6 +34,14 @@ jobs:
         run: |
           docker compose -f docker-compose.yml -f docker-compose.test.yml up --build
 
+      - name: Compose ps + health details
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.test.yml ps
+          docker inspect antaris-sql-test --format='{{json .State.Health}}' | jq .
+          echo "---- logs (last 200) ----"
+          docker logs --tail 200 antaris-sql-test
+
       - name: Show running containers
         run: |
           docker ps
