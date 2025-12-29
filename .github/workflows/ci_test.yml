@@ -9,19 +9,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     env:
       DB_PASSWORD_TEST: ${{ secrets.DB_PASSWORD_TEST }}
 
     steps:
       - name: db pass test
-        run: | 
+        run: |
           if [ -z "$DB_PASSWORD_TEST" ]; then
             echo "DB_PASSWORD_TEST is EMPTY"
+            exit 1
           else
             echo "DB_PASSWORD_TEST is SET"
           fi
-      
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -32,27 +34,55 @@ jobs:
 
       - name: Compose up (Test)
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.test.yml up --build
+          docker compose -f docker-compose.yml -f docker-compose.test.yml up --build -d
 
-      - name: Compose ps + health details
-        if: always()
+      - name: Wait for SQL port
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.test.yml ps
-          docker inspect antaris-sql-test --format='{{json .State.Health}}' | jq .
-          echo "---- logs (last 200) ----"
-          docker logs --tail 200 antaris-sql-test
-
-      - name: Show running containers
-        run: |
+          for i in {1..60}; do
+            if (echo > /dev/tcp/localhost/1433) >/dev/null 2>&1; then
+              echo "SQL is accepting TCP connections"
+              exit 0
+            fi
+            echo "Waiting for SQL... ($i/60)"
+            sleep 2
+          done
+          echo "SQL did not become ready in time"
           docker ps
+          docker logs --tail 200 antaris-sql-test || true
+          exit 1
 
       - name: Apply EF Core migrations (Test)
         run: |
-          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.DB_PASSWORD_TEST}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
+          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;MultipleActiveResultSets=True;"
 
-      - name: Health check API
+      - name: Wait for API health
         run: |
-          curl -sSf http://localhost:4200/api/health > /dev/null
+          for i in {1..60}; do
+            if curl -sSf http://localhost:4200/api/health > /dev/null; then
+              echo "API health is OK"
+              exit 0
+            fi
+            echo "Waiting for API... ($i/60)"
+            sleep 2
+          done
+          echo "API did not become healthy in time"
+          docker logs --tail 200 antaris-api || true
+          docker logs --tail 200 antaris-web || true
+          exit 1
+
+      - name: Show running containers
+        if: always()
+        run: |
+          docker ps
+          docker compose -f docker-compose.yml -f docker-compose.test.yml ps
+
+      - name: Compose ps + SQL health details (on failure)
+        if: failure()
+        run: |
+          echo "---- SQL inspect ----"
+          docker inspect antaris-sql-test --format='{{json .State.Health}}' || true
+          echo "---- SQL logs (last 200) ----"
+          docker logs --tail 200 antaris-sql-test || true
 
       - name: Cleanup
         if: always()
