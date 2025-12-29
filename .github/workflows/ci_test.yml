@@ -11,9 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+      DB_PASSWORD_TEST: ${{ secrets.DB_PASSWORD_TEST }}
 
     steps:
+      - name: db pass test
+        run: | 
+          if [ -z "$DB_PASSWORD_TEST" ]; then
+            echo "DB_PASSWORD_TEST is EMPTY"
+          else
+            echo "DB_PASSWORD_TEST is SET"
+          fi
+      
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,13 +34,21 @@ jobs:
         run: |
           docker compose -f docker-compose.yml -f docker-compose.test.yml up --build
 
+      - name: Compose ps + health details
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.test.yml ps
+          docker inspect antaris-sql-test --format='{{json .State.Health}}' | jq .
+          echo "---- logs (last 200) ----"
+          docker logs --tail 200 antaris-sql-test
+
       - name: Show running containers
         run: |
           docker ps
 
       - name: Apply EF Core migrations (Test)
         run: |
-          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.TEST_DB_PASSWORD}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
+          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{secrets.DB_PASSWORD_TEST}};TrustServerCertificate=True;MultipleActiveResultSets=True;"
 
       - name: Health check API
         run: |
