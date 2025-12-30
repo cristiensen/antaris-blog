@@ -51,6 +51,17 @@ jobs:
           docker logs --tail 200 antaris-sql-test || true
           exit 1
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install dotnet-ef
+        run: |
+          dotnet tool install --global dotnet-ef
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+
       - name: Apply EF Core migrations (Test)
         run: |
           dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;MultipleActiveResultSets=True;"
