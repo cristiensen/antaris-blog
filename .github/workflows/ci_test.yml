@@ -64,8 +64,8 @@ jobs:
 
       - name: Apply EF Core migrations (Test)
         run: |
-          dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;MultipleActiveResultSets=True;"
-
+          # dotnet ef database update --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;MultipleActiveResultSets=True;"
+          --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
       - name: Wait for API health
         run: |
           for i in {1..60}; do
