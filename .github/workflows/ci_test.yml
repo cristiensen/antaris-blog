@@ -54,7 +54,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: "9.0.x"
 
       - name: Install dotnet-ef
         run: |
@@ -74,6 +74,7 @@ jobs:
           set -euo pipefail
           CSPROJ="$(find . -maxdepth 6 -name "*.csproj" | head -n 1)"
           echo "Using project: $CSPROJ"
+          dotnet restore "$CSPROJ"
           dotnet ef database update \
             --project "$CSPROJ" \
             --startup-project "$CSPROJ" \
