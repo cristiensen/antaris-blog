@@ -71,8 +71,14 @@ jobs:
 
       - name: Apply EF Core migrations (Test)
         run: |
+          set -euo pipefail
+          CSPROJ="$(find . -maxdepth 6 -name "*.csproj" | head -n 1)"
+          echo "Using project: $CSPROJ"
           dotnet ef database update \
+            --project "$CSPROJ" \
+            --startup-project "$CSPROJ" \
             --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
+            
       - name: Wait for API health
         run: |
           for i in {1..60}; do
