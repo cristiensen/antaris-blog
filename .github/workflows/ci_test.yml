@@ -61,6 +61,13 @@ jobs:
           dotnet tool install --global dotnet-ef
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
+      - name: Debug repo layout
+        run: |
+          pwd
+          ls -la
+          echo "---- csproj files ----"
+          find . -maxdepth 4 -name "*.csproj" -print
+
 
       - name: Apply EF Core migrations (Test)
         run: |
