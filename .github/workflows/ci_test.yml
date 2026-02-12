@@ -79,6 +79,10 @@ jobs:
             --project "$CSPROJ" \
             --startup-project "$CSPROJ" \
             --connection "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=$DB_PASSWORD_TEST;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
+          env:
+          DB_PASSWORD_TEST: ${{ secrets.DB_PASSWORD_TEST }}
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=AntarisBlogTest;User Id=sa;Password=${{ secrets.DB_PASSWORD_TEST }};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
+          ASPNETCORE_ENVIRONMENT: Test
             
       - name: Wait for API health
         run: |
