@@ -21,7 +21,7 @@ jobs:
             echo "DB_PASSWORD_TEST is EMPTY"
             exit 1
           else
-            echo "DB_PASSWORD_TEST is SET"
+            echo "DB_PASSWORD_TEST is SET to a non null value"
           fi
 
       - name: Checkout
